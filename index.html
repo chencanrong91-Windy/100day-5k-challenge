@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0B1611" />
+  <title>100天5公里挑战</title>
+  <style>
+    :root {
+      --bg: #0b1611;
+      --card: rgba(18, 36, 28, 0.88);
+      --line: rgba(232, 184, 109, 0.2);
+      --text: #f3efe6;
+      --muted: #8fa597;
+      --accent: #e8b86d;
+      --ok: #6fbf8b;
+      --danger: #e07a5f;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --font: "DIN Alternate", "Avenir Next", "PingFang SC", "Helvetica Neue", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(120% 70% at 8% -8%, #1c3d2c 0%, transparent 52%),
+        radial-gradient(80% 50% at 100% 0%, #2c2416 0%, transparent 42%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      -webkit-tap-highlight-color: transparent;
+    }
+    body { padding: 20px 16px 96px; }
+    .wrap { max-width: 520px; margin: 0 auto; }
+    .eyebrow {
+      color: var(--accent);
+      letter-spacing: 0.32em;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 10px 0 0;
+      font-size: clamp(34px, 9vw, 46px);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      line-height: 1.15;
+    }
+    .sub { margin-top: 10px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .card {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 22px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: 0.08em;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .muted { color: var(--muted); font-size: 12px; }
+    .big {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.1;
+    }
+    .track {
+      margin-top: 12px;
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+    .fill {
+      height: 100%;
+      width: 0;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #6fbf8b, #e8b86d);
+      transition: width .35s ease;
+    }
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      background: rgba(111,191,139,.16);
+      color: var(--ok);
+      white-space: nowrap;
+    }
+    .tag.warn { background: rgba(232,184,109,.16); color: var(--accent); }
+    .btn {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      height: 46px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #e8b86d, #c8913f);
+      color: #1a140a;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+    }
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+    .btn.danger {
+      background: transparent;
+      border: 1px solid rgba(224,122,95,.45);
+      color: var(--danger);
+    }
+    .btn:active { transform: scale(0.985); }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    input, textarea {
+      width: 100%;
+      margin-top: 6px;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.28);
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+    }
+    textarea { height: 120px; padding: 12px 14px; resize: vertical; }
+    .tip {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(232,184,109,.08);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .list-item {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .list-item:last-child { border-bottom: 0; }
+    .tabs {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(11, 22, 17, 0.92);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+      z-index: 20;
+    }
+    .tabs button {
+      height: 44px;
+      border: 0;
+      border-radius: 14px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .tabs button.on {
+      color: #1a140a;
+      background: linear-gradient(135deg, #e8b86d, #c8913f);
+    }
+    .panel { display: none; animation: in .28s ease; }
+    .panel.on { display: block; }
+    @keyframes in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+    .del {
+      margin-top: 8px;
+      border: 0;
+      background: none;
+      color: var(--danger);
+      font-size: 12px;
+      padding: 0;
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 90px;
+      transform: translateX(-50%) translateY(20px);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(243,239,230,.92);
+      color: #1a140a;
+      font-size: 13px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      z-index: 40;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="panel on" id="panel-home">
+      <div class="eyebrow">100 DAYS · 5 KM</div>
+      <h1>第 <span id="dayNum">1</span> 天</h1>
+      <div class="sub" id="homeSub">加载中…</div>
+
+      <div class="card">
+        <div class="row">
+          <div class="card-title">打卡进度</div>
+          <div class="tag" id="doneTag">0 / 100 天</div>
+        </div>
+        <div class="track"><div class="fill" id="progressFill"></div></div>
+        <div class="row" style="margin-top:14px">
+          <div>
+            <div class="muted">累计里程</div>
+            <div class="big" style="font-size:30px" id="totalKm">0</div>
+            <div class="muted">公里</div>
+          </div>
+          <div style="text-align:right">
+            <div class="muted">剩余达标天</div>
+            <div class="big" style="font-size:30px;color:var(--ok)" id="remainDays">100</div>
+            <div class="muted">天</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div class="card-title">今日体重</div>
+          <div class="muted" id="deltaKg"></div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <div>
+            <div class="muted">白天 / 晨重</div>
+            <div style="font-size:26px;margin-top:4px"><span id="todayMorning">--</span> <span class="muted">kg</span></div>
+          </div>
+          <div style="text-align:right">
+            <div class="muted">晚上 / 睡前</div>
+            <div style="font-size:26px;margin-top:4px"><span id="todayNight">--</span> <span class="muted">kg</span></div>
+          </div>
+        </div>
+        <button class="btn ghost" data-go="weight">记录体重</button>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div class="card-title">最近跑步</div>
+          <div class="muted">手表手填</div>
+        </div>
+        <div id="recentRuns"></div>
+        <button class="btn" data-go="run">录入本次跑步</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">说明</div>
+        <div class="tip">
+          这是免审核 H5：用普通链接在微信里打开即可。数据存在浏览器 localStorage；清理微信缓存会丢，请在「设置」导出备份。Apple Watch 无法被网页直读，请从健身 App 抄数。
+        </div>
+        <button class="btn ghost" data-go="settings">挑战设置 / 导出备份</button>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-weight">
+      <div class="eyebrow">WEIGHT</div>
+      <h1>白天 / 晚上</h1>
+      <div class="sub">建议晨起重、睡前再记一次。</div>
+      <div class="card">
+        <label>日期<input type="date" id="wDate" /></label>
+        <label>白天体重（晨重）kg<input type="number" step="0.1" id="wMorning" placeholder="例如 72.4" /></label>
+        <label>晚上体重（睡前）kg<input type="number" step="0.1" id="wNight" placeholder="例如 73.1" /></label>
+        <button class="btn" id="saveWeight">保存到本地</button>
+      </div>
+      <div class="card">
+        <div class="card-title">最近体重</div>
+        <div id="weightHistory"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-run">
+      <div class="eyebrow">APPLE WATCH</div>
+      <h1>跑步录入</h1>
+      <div class="sub">从手表 / iPhone「健身」抄里程、时长、心率、千卡。</div>
+      <div class="card">
+        <div class="tip">网页无法直连 HealthKit。跑完打开健身 App → 填到本页 → 保存。</div>
+        <label>日期<input type="date" id="rDate" /></label>
+        <label>距离 km<input type="number" step="0.01" id="rDist" placeholder="例如 5.12" /></label>
+        <label>时长（分:秒 / 时:分:秒 / 或分钟）<input type="text" id="rDur" placeholder="例如 28:36" /></label>
+        <label>平均心率 bpm（可选）<input type="number" id="rAvgHr" placeholder="例如 148" /></label>
+        <label>最高心率 bpm（可选）<input type="number" id="rMaxHr" placeholder="例如 172" /></label>
+        <label>活动千卡（可选）<input type="number" id="rCal" placeholder="例如 420" /></label>
+        <label>备注（可选）<input type="text" id="rNote" placeholder="路线 / 感觉…" /></label>
+        <button class="btn" id="saveRun">保存跑步记录</button>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-history">
+      <div class="eyebrow">LOG</div>
+      <h1>全部记录</h1>
+      <div class="sub">跑步与体重都在本机；可删除单条跑步。</div>
+      <div class="card">
+        <div class="card-title">跑步</div>
+        <div id="allRuns"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">体重</div>
+        <div id="allWeights"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-settings">
+      <div class="eyebrow">SETTINGS</div>
+      <h1>挑战设置</h1>
+      <div class="sub">开始日、昵称、导出备份。清理缓存前请先复制 JSON。</div>
+      <div class="card">
+        <label>昵称<input type="text" id="sNick" /></label>
+        <label>挑战开始日<input type="date" id="sStart" /></label>
+        <label>每日目标公里<input type="number" step="0.1" id="sKm" /></label>
+        <button class="btn" id="saveProfile">保存设置</button>
+      </div>
+      <div class="card">
+        <div class="card-title">数据备份</div>
+        <div class="tip">导出后可贴到备忘录 / 飞书。换机时粘回导入。</div>
+        <button class="btn ghost" id="doExport">复制全部数据 JSON</button>
+        <label>导入 JSON<textarea id="importText" placeholder="粘贴导出的 JSON"></textarea></label>
+        <button class="btn ghost" id="doImport">从 JSON 恢复</button>
+        <button class="btn danger" id="doClear">清空本机挑战数据</button>
+      </div>
+    </section>
+  </div>
+
+  <nav class="tabs">
+    <button class="on" data-tab="home">挑战</button>
+    <button data-tab="weight">体重</button>
+    <button data-tab="run">跑步</button>
+    <button data-tab="history">记录</button>
+  </nav>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const KEY = 'challenge_100d_5k_h5_v1'
+    const $ = (id) => document.getElementById(id)
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n }
+    function today() {
+      const d = new Date()
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`
+    }
+    function parseDate(s) {
+      const [y,m,d] = (s||'').split('-').map(Number)
+      return new Date(y, (m||1)-1, d||1)
+    }
+    function dayIndex(start, dateStr) {
+      const a = parseDate(start), b = parseDate(dateStr || today())
+      a.setHours(0,0,0,0); b.setHours(0,0,0,0)
+      return Math.floor((b - a) / 86400000) + 1
+    }
+    function formatPace(secPerKm) {
+      if (!secPerKm || secPerKm <= 0) return '--'
+      const m = Math.floor(secPerKm / 60)
+      const s = Math.round(secPerKm % 60)
+      return `${m}'${pad(s)}"`
+    }
+    function parseDurationToSec(text) {
+      if (!text) return 0
+      const t = String(text).trim()
+      if (/^\d+(\.\d+)?$/.test(t)) return Math.round(Number(t) * 60)
+      const parts = t.split(':').map(Number)
+      if (parts.length === 3) return parts[0]*3600 + parts[1]*60 + parts[2]
+      if (parts.length === 2) return parts[0]*60 + parts[1]
+      return 0
+    }
+    function toast(msg) {
+      const el = $('toast')
+      el.textContent = msg
+      el.classList.add('show')
+      clearTimeout(toast._t)
+      toast._t = setTimeout(() => el.classList.remove('show'), 1600)
+    }
+    function defaultProfile() {
+      return { startDate: today(), targetDays: 100, targetKm: 5, nickname: '挑战者', createdAt: Date.now() }
+    }
+    function blank() { return { profile: defaultProfile(), weights: {}, runs: [] } }
+    function read() {
+      try {
+        const raw = localStorage.getItem(KEY)
+        if (!raw) return blank()
+        const data = JSON.parse(raw)
+        if (!data.profile) data.profile = defaultProfile()
+        if (!data.weights) data.weights = {}
+        if (!Array.isArray(data.runs)) data.runs = []
+        return data
+      } catch (e) { return blank() }
+    }
+    function write(data) {
+      localStorage.setItem(KEY, JSON.stringify(data))
+      return data
+    }
+    function getStats() {
+      const data = read()
+      const { profile, weights, runs } = data
+      const day = dayIndex(profile.startDate, today())
+      const clampedDay = Math.min(Math.max(day, 1), profile.targetDays)
+      const doneDays = new Set(runs.filter(r => r.done5k).map(r => r.date)).size
+      const totalKm = runs.reduce((s, r) => s + (Number(r.distanceKm) || 0), 0)
+      const weightDates = Object.keys(weights).sort()
+      let latestMorning = null, firstMorning = null, latestNight = null
+      for (const d of weightDates) {
+        const w = weights[d]
+        if (w.morning && firstMorning == null) firstMorning = w.morning.kg
+        if (w.morning) latestMorning = w.morning.kg
+        if (w.night) latestNight = w.night.kg
+      }
+      const todayW = weights[today()] || {}
+      return {
+        profile, day: clampedDay, doneDays,
+        remainDays: Math.max(0, profile.targetDays - doneDays),
+        progress: Math.min(100, Math.round((doneDays / profile.targetDays) * 100)),
+        totalKm: Math.round(totalKm * 100) / 100,
+        todayMorning: todayW.morning ? todayW.morning.kg : null,
+        todayNight: todayW.night ? todayW.night.kg : null,
+        deltaKg: firstMorning != null && latestMorning != null
+          ? Math.round((latestMorning - firstMorning) * 10) / 10 : null,
+        recentRuns: runs.slice(0, 5),
+        runs, weights
+      }
+    }
+
+    function showPanel(name) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'))
+      document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === name || (name === 'settings' && b.dataset.tab === 'home')))
+      if (name === 'settings') {
+        $('panel-settings').classList.add('on')
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('on'))
+      } else {
+        $('panel-' + name).classList.add('on')
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === name))
+      }
+      if (name === 'home') renderHome()
+      if (name === 'weight') renderWeight()
+      if (name === 'run') prepareRun()
+      if (name === 'history') renderHistory()
+      if (name === 'settings') renderSettings()
+      window.scrollTo(0, 0)
+    }
+
+    function renderHome() {
+      const s = getStats()
+      $('dayNum').textContent = s.day
+      $('homeSub').textContent = `${s.profile.nickname} · 自 ${s.profile.startDate} 起 · 目标每天 ≥ ${s.profile.targetKm} km`
+      $('doneTag').textContent = `${s.doneDays} / ${s.profile.targetDays} 天`
+      $('progressFill').style.width = s.progress + '%'
+      $('totalKm').textContent = s.totalKm
+      $('remainDays').textContent = s.remainDays
+      $('todayMorning').textContent = s.todayMorning != null ? s.todayMorning : '--'
+      $('todayNight').textContent = s.todayNight != null ? s.todayNight : '--'
+      $('deltaKg').textContent = s.deltaKg != null ? `较首日晨重 ${s.deltaKg > 0 ? '+' : ''}${s.deltaKg} kg` : ''
+      const box = $('recentRuns')
+      if (!s.recentRuns.length) {
+        box.innerHTML = '<div class="muted" style="margin-top:10px">还没有跑步记录。</div>'
+      } else {
+        box.innerHTML = s.recentRuns.map(item => `
+          <div class="list-item">
+            <div class="row">
+              <div>
+                <div>${item.date} · ${item.distanceKm} km</div>
+                <div class="muted">${item.durationText || item.paceText} · 配速 ${item.paceText}${item.avgHr ? ' · ' + item.avgHr + ' bpm' : ''}</div>
+              </div>
+              <div class="tag ${item.done5k ? '' : 'warn'}">${item.done5k ? '达标' : '未满5km'}</div>
+            </div>
+          </div>`).join('')
+      }
+    }
+
+    function renderWeight() {
+      const data = read()
+      if (!$('wDate').value) $('wDate').value = today()
+      const date = $('wDate').value
+      const w = data.weights[date] || {}
+      $('wMorning').value = w.morning ? w.morning.kg : ''
+      $('wNight').value = w.night ? w.night.kg : ''
+      const hist = Object.keys(data.weights).sort().reverse().slice(0, 14)
+      $('weightHistory').innerHTML = hist.length
+        ? hist.map(d => {
+            const x = data.weights[d]
+            return `<div class="list-item"><div class="row"><div>${d}</div><div class="muted">昼 ${x.morning ? x.morning.kg : '--'} · 夜 ${x.night ? x.night.kg : '--'}</div></div></div>`
+          }).join('')
+        : '<div class="muted" style="margin-top:8px">暂无记录</div>'
+    }
+
+    function prepareRun() {
+      if (!$('rDate').value) $('rDate').value = today()
+    }
+
+    function renderHistory() {
+      const data = read()
+      $('allRuns').innerHTML = data.runs.length
+        ? data.runs.map(item => `
+          <div class="list-item">
+            <div class="row">
+              <div style="flex:1">
+                <div>${item.date} · ${item.distanceKm} km</div>
+                <div class="muted">配速 ${item.paceText} · ${item.durationText || item.durationSec + 's'}${item.avgHr ? ' · HR ' + item.avgHr : ''}${item.calories ? ' · ' + item.calories + ' kcal' : ''}</div>
+                ${item.note ? `<div class="muted">${item.note}</div>` : ''}
+              </div>
+              <div>
+                <div class="tag ${item.done5k ? '' : 'warn'}">${item.done5k ? '达标' : '未满'}</div>
+                <button class="del" data-del="${item.id}">删除</button>
+              </div>
+            </div>
+          </div>`).join('')
+        : '<div class="muted" style="margin-top:8px">暂无跑步</div>'
+      const weights = Object.keys(data.weights).sort().reverse()
+      $('allWeights').innerHTML = weights.length
+        ? weights.map(d => {
+            const x = data.weights[d]
+            return `<div class="list-item"><div class="row"><div>${d}</div><div class="muted">昼 ${x.morning ? x.morning.kg : '--'} / 夜 ${x.night ? x.night.kg : '--'} kg</div></div></div>`
+          }).join('')
+        : '<div class="muted" style="margin-top:8px">暂无体重</div>'
+      $('allRuns').querySelectorAll('[data-del]').forEach(btn => {
+        btn.onclick = () => {
+          if (!confirm('删除这条跑步？')) return
+          const data2 = read()
+          data2.runs = data2.runs.filter(r => r.id !== btn.dataset.del)
+          write(data2)
+          renderHistory()
+          toast('已删除')
+        }
+      })
+    }
+
+    function renderSettings() {
+      const p = read().profile
+      $('sNick').value = p.nickname || ''
+      $('sStart').value = p.startDate || today()
+      $('sKm').value = p.targetKm || 5
+    }
+
+    document.querySelectorAll('.tabs button').forEach(btn => {
+      btn.addEventListener('click', () => showPanel(btn.dataset.tab))
+    })
+    document.querySelectorAll('[data-go]').forEach(btn => {
+      btn.addEventListener('click', () => showPanel(btn.dataset.go))
+    })
+    $('wDate').addEventListener('change', renderWeight)
+    $('saveWeight').onclick = () => {
+      const date = $('wDate').value || today()
+      const morning = $('wMorning').value
+      const night = $('wNight').value
+      if (!morning && !night) return toast('请至少填一项')
+      const data = read()
+      const day = data.weights[date] || {}
+      if (morning) {
+        const n = Number(morning)
+        if (!(n > 20 && n < 300)) return toast('白天体重不合理')
+        day.morning = { kg: n, at: Date.now() }
+      }
+      if (night) {
+        const n = Number(night)
+        if (!(n > 20 && n < 300)) return toast('晚上体重不合理')
+        day.night = { kg: n, at: Date.now() }
+      }
+      data.weights[date] = day
+      write(data)
+      toast('已保存')
+      renderWeight()
+    }
+    $('saveRun').onclick = () => {
+      const distanceKm = Number($('rDist').value)
+      if (!(distanceKm > 0 && distanceKm < 200)) return toast('请填写有效距离')
+      const data = read()
+      const durationText = $('rDur').value
+      const durationSec = parseDurationToSec(durationText)
+      const paceSec = distanceKm > 0 ? durationSec / distanceKm : 0
+      const item = {
+        id: 'run_' + Date.now(),
+        date: $('rDate').value || today(),
+        distanceKm,
+        durationSec,
+        durationText,
+        avgHr: $('rAvgHr').value ? Number($('rAvgHr').value) : null,
+        maxHr: $('rMaxHr').value ? Number($('rMaxHr').value) : null,
+        calories: $('rCal').value ? Number($('rCal').value) : null,
+        paceSec,
+        paceText: formatPace(paceSec),
+        source: 'apple_watch',
+        note: $('rNote').value || '',
+        done5k: distanceKm >= (data.profile.targetKm || 5),
+        createdAt: Date.now()
+      }
+      data.runs.unshift(item)
+      data.runs.sort((a,b) => a.date < b.date ? 1 : a.date > b.date ? -1 : b.createdAt - a.createdAt)
+      write(data)
+      toast(item.done5k ? '达标已记录' : '已记录')
+      ;['rDist','rDur','rAvgHr','rMaxHr','rCal','rNote'].forEach(id => $(id).value = '')
+    }
+    $('saveProfile').onclick = () => {
+      const km = Number($('sKm').value)
+      if (!(km > 0)) return toast('目标公里无效')
+      const data = read()
+      data.profile = Object.assign({}, data.profile, {
+        nickname: $('sNick').value || '挑战者',
+        startDate: $('sStart').value || today(),
+        targetKm: km
+      })
+      write(data)
+      toast('设置已保存')
+    }
+    $('doExport').onclick = async () => {
+      const text = JSON.stringify(read(), null, 2)
+      try {
+        await navigator.clipboard.writeText(text)
+        toast('已复制 JSON')
+      } catch (e) {
+        prompt('复制下面内容', text)
+      }
+    }
+    $('doImport').onclick = () => {
+      try {
+        const parsed = JSON.parse($('importText').value)
+        write({
+          profile: parsed.profile || defaultProfile(),
+          weights: parsed.weights || {},
+          runs: Array.isArray(parsed.runs) ? parsed.runs : []
+        })
+        toast('已恢复')
+        renderSettings()
+      } catch (e) { toast('JSON 无效') }
+    }
+    $('doClear').onclick = () => {
+      if (!confirm('确认清空？体重与跑步都会删除。')) return
+      localStorage.removeItem(KEY)
+      write(blank())
+      toast('已清空')
+      renderSettings()
+    }
+
+    // ensure storage exists
+    write(read())
+    $('wDate').value = today()
+    $('rDate').value = today()
+    renderHome()
+  </script>
+</body>
+</html>
